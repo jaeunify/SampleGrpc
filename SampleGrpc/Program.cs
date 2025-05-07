@@ -24,7 +24,7 @@ builder.Services.AddGrpc(options =>
 var app = builder.Build();
 
 // gRPC 엔드포인트 매핑
-app.MapGrpcService<GrpcDemo.Services.GreeterService>();
+app.MapGrpcService<GrpcDemo.Services.BankService>();
 app.MapGrpcService<GrpcDemo.Services.MessengerService>();
 app.MapGet("/", () => "gRPC 클라이언트로 접속해야 합니다.");
 

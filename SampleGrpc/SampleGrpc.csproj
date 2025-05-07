@@ -18,8 +18,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Protobuf Include="Proto\greet.proto">
-        <Generator>MSBuild:Compile</Generator>
+      <Protobuf Include="Proto\bank.proto">
+          <Generator>MSBuild:Compile</Generator>
+          <Access>Public</Access>
+          <ProtoCompile>True</ProtoCompile>
+          <CompileOutputs>True</CompileOutputs>
+          <OutputDir>obj\Debug\net9.0\</OutputDir>
+          <Generator>MSBuild:Compile</Generator>
       </Protobuf>
       <Protobuf Include="Proto\messenger.proto">
         <GrpcServices>Both</GrpcServices>

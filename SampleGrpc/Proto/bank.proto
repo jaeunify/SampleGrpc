@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcDemo";
+
+package bank;
+
+// 입금
+message DepositRequest {
+  int32 amount = 1;
+}
+
+// 출금
+message WithdrawRequest {
+  int32 amount = 1;
+}
+
+// 송금
+message TransferRequest {
+  int32 amount = 1;
+  string to = 2;
+}
+
+// 잔고
+message Account{
+  int32 amount = 1;
+}
+
+// 서비스 정의
+service Bank {
+  rpc Deposit (DepositRequest) returns (Account);
+  rpc Withdraw (WithdrawRequest) returns (Account);
+  rpc Transfer (TransferRequest) returns (Account);
+}
+
+
