@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcDemo";
+
+package messenger;
+
+// 메세지 주고받는 프로토콜
+message RequestMessage{
+  
+  message SendMessage{
+    string message = 1;
+  }
+  
+  oneof msg{
+    SendMessage send = 1;
+  }
+  
+}
+
+message ResponseMessage{
+  
+  message ReceiveMessage{
+    string message = 1;
+  }
+  
+  oneof msg{
+    ReceiveMessage receive = 2;
+  }
+  
+}
+
+service Messenger {
+  rpc Chat(stream RequestMessage) returns (stream ResponseMessage);
+}
