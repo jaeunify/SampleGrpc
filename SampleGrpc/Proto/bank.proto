@@ -9,6 +9,9 @@ message DepositRequest {
   int32 amount = 1;
 }
 
+// 코드 분석을 하고
+// 어떻게 마이그레이션할지 고민해보기
+
 // 출금
 message WithdrawRequest {
   int32 amount = 1;

@@ -1,6 +1,6 @@
 ﻿public interface IAccountGrain : IGrainWithStringKey
 {
-    Task<decimal> GetBalance();
-    Task Deposit(decimal amount);
-    Task<bool> Withdraw(decimal amount);
+    Task<int> GetBalance();
+    Task Deposit(int amount);
+    Task<bool> Withdraw(int amount);
 }

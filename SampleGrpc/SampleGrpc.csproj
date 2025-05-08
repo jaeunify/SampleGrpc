@@ -11,6 +11,7 @@
         <PackageReference Include="Grpc.AspNetCore" Version="2.62.0" />
         <PackageReference Include="Google.Protobuf" Version="3.25.3" />
         <PackageReference Include="Grpc.Tools" Version="2.62.0" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.Orleans.Transactions" Version="9.1.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -34,6 +35,10 @@
         <OutputDir>obj\Debug\net9.0\</OutputDir>
         <Generator>MSBuild:Compile</Generator>
       </Protobuf>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\GrainInterfaces\GrainInterfaces.csproj" />
     </ItemGroup>
 
 </Project>

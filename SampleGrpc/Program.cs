@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Orleans;
+using Orleans.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,11 +18,20 @@ builder.WebHost.ConfigureKestrel(options =>
     });
 });
 
+// grpc 서비스 등록
 builder.Services.AddSingleton<StreamManager>();
 builder.Services.AddGrpc(options =>                
         options.Interceptors.Add<GrpcInterceptor>()
     );
 
+// Orleans 클라이언트 등록
+builder.Host
+    .UseOrleansClient(client =>
+    {
+        client.UseLocalhostClustering()
+            .UseTransactions();
+    })
+    .UseConsoleLifetime();
 
 var app = builder.Build();
 
