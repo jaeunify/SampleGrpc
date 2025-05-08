@@ -5,7 +5,9 @@ IHostBuilder builder = Host.CreateDefaultBuilder(args)
     .UseOrleans(silo =>
     {
         silo.UseLocalhostClustering()
-            .ConfigureLogging(logging => logging.AddConsole());
+            .AddMemoryGrainStorageAsDefault()
+            .ConfigureLogging(logging => logging.AddConsole())
+            .UseTransactions();
     })
     .UseConsoleLifetime();
 
