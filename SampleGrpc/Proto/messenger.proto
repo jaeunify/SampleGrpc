@@ -6,11 +6,13 @@ package messenger;
 
 // 메세지 주고받는 프로토콜
 message RequestMessage{
-  message SendMessage{
+  message SendMessage
+  {
     string message = 1;
   }
   
-  oneof msg{
+  oneof msg
+  {
     SendMessage send = 1;
   }
 }
