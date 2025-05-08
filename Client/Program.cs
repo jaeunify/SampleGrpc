@@ -10,15 +10,15 @@ class Program
     public static async Task Main(string[] args)
     {
         Console.WriteLine("========================");
-        Console.WriteLine("= 어떤 기능을 선택할까요? ");
-        Console.WriteLine("= 1. 채팅서버 접속 ");
-        Console.WriteLine("= 2. 은행서버 접속 ");
+        Console.WriteLine("= Which Mode? ");
+        Console.WriteLine("= 1. Chat ");
+        Console.WriteLine("= 2. Bank ");
         Console.WriteLine("========================");
 
         int input;
         while (true)
         {
-            Console.Write("숫자 입력 : ");
+            Console.Write(">> ");
             if (int.TryParse(Console.ReadLine(), out input))
             {
                 switch (input)
@@ -30,7 +30,7 @@ class Program
                         await RunBankMode();
                         return;
                     default:
-                        Console.WriteLine("잘못된 입력입니다. 다시 시도하세요.");
+                        Console.WriteLine("wrong");
                         break;
                 }
             }
@@ -89,25 +89,26 @@ class Program
 
     public static async Task RunBankMode()
     {
-        using var channel = GrpcChannel.ForAddress("https://localhost:5001");
+        using var channel = CreateInsecureChannel("https://localhost:5001");
+        // using var channel = GrpcChannel.ForAddress("https://localhost:5001");
         var client = new Bank.BankClient(channel);
 
         while (true)
         {
             Console.WriteLine("========================");
-            Console.WriteLine("= 은행 기능을 선택하세요:");
-            Console.WriteLine("= 1. 입금");
-            Console.WriteLine("= 2. 출금");
-            Console.WriteLine("= 3. 송금");
-            Console.WriteLine("= 0. 종료");
+            Console.WriteLine("= Bank:");
+            Console.WriteLine("= 1. Deposit");
+            Console.WriteLine("= 2. Withdraw");
+            Console.WriteLine("= 3. Transfer");
+            Console.WriteLine("= 0. Exit");
             Console.WriteLine("========================");
 
-            Console.Write("선택: ");
+            Console.Write(">> ");
             var input = Console.ReadLine();
 
             if (input == "0")
             {
-                Console.WriteLine("은행 모드를 종료합니다.");
+                Console.WriteLine("Exit..");
                 break;
             }
 
@@ -115,51 +116,67 @@ class Program
             {
                 switch (input)
                 {
-                    case "1": // 입금
-                        Console.Write("입금할 금액: ");
+                    case "1": // deposit
+                        Console.Write("amount: ");
                         if (int.TryParse(Console.ReadLine(), out int depositAmount))
                         {
                             var result = await client.DepositAsync(new DepositRequest { Amount = depositAmount });
-                            Console.WriteLine($"[입금 완료] 현재 잔액: {result.Amount}");
+                            Console.WriteLine($"[OK] now: {result.Amount}");
                         }
 
                         break;
 
-                    case "2": // 출금
-                        Console.Write("출금할 금액: ");
+                    case "2":  // withdraw
+                        Console.Write("amount: ");
                         if (int.TryParse(Console.ReadLine(), out int withdrawAmount))
                         {
                             var result = await client.WithdrawAsync(new WithdrawRequest { Amount = withdrawAmount });
-                            Console.WriteLine($"[출금 완료] 현재 잔액: {result.Amount}");
+                            Console.WriteLine($"[OK] now: {result.Amount}");
                         }
 
                         break;
 
-                    case "3": // 송금
-                        Console.Write("송금할 대상 이름: ");
+                    case "3": // Transfer
+                        Console.Write("for who? : ");
                         var to = Console.ReadLine();
-                        Console.Write("송금할 금액: ");
+                        Console.Write("amount: ");
                         if (int.TryParse(Console.ReadLine(), out int transferAmount))
                         {
                             var result = await client.TransferAsync(new TransferRequest { Amount = transferAmount, To = to });
-                            Console.WriteLine($"[송금 완료] 현재 잔액: {result.Amount}");
+                            Console.WriteLine($"[OK] now: {result.Amount}");
                         }
 
                         break;
 
                     default:
-                        Console.WriteLine("잘못된 선택입니다.");
+                        Console.WriteLine("wrong.");
                         break;
                 }
             }
             catch (RpcException ex)
             {
-                Console.WriteLine($"[gRPC 오류] {ex.Status.Detail}");
+                Console.WriteLine($"[gRPC error] {ex.Status.Detail}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[예외 발생] {ex.Message}");
+                Console.WriteLine($"[exception] {ex.Message}");
             }
         }
+    }
+    
+    private static GrpcChannel CreateInsecureChannel(string address)
+    {
+        AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+
+        var handler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        };
+
+        var httpClient = new HttpClient(handler);
+        return GrpcChannel.ForAddress(address, new GrpcChannelOptions
+        {
+            HttpClient = httpClient
+        });
     }
 }

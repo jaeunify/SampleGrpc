@@ -1,7 +1,7 @@
 ﻿public interface IAccountGrain : IGrainWithStringKey
 
 {
-    [Transaction(TransactionOption.Create)]
+    [Transaction(TransactionOption.CreateOrJoin)]
     Task<int> GetBalance();
     
     [Transaction(TransactionOption.Join)]
