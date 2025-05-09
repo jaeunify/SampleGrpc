@@ -3,6 +3,7 @@ using GrpcDemo;
 using Orleans;
 using GrpcDemo.Services;
 using Orleans.Transactions;
+using SampleGrpc;
 
 namespace GrpcDemo.Services
 {
@@ -11,10 +12,11 @@ namespace GrpcDemo.Services
         private readonly IClusterClient _orleansClient;
         private readonly ITransactionClient _transactionClient;
 
-        public BankService(IClusterClient orleansClient, ITransactionClient transactionClient)
+        public BankService(IClusterClient orleansClient, ITransactionClient transactionClient, ScopeManager s)
         {
             _orleansClient = orleansClient;
             _transactionClient = transactionClient;
+            Console.WriteLine("scope id는 : " + s.Id);
         }
         
         public override async Task<Account> GetBalance(GetBalanceRequest request, ServerCallContext context)
