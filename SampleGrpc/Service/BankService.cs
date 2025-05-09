@@ -49,11 +49,12 @@ namespace GrpcDemo.Services
             await _transactionClient.RunTransaction(TransactionOption.Create, async () =>
             {
                 Console.WriteLine("Service: " + TransactionContext.GetRequiredTransactionInfo());
-                await grain.Transfer(request.Amount, request.To);
+                await grain.Withdraw(request.Amount);
+                await targetGrain.Deposit(request.Amount);
             });
             
-            // var balance = await grain.GetBalance();
-            return new Account { Amount = 0 };
+            var balance = await grain.GetBalance();
+            return new Account { Amount = balance };
         }
 
         private string GetUserId(ServerCallContext context)
