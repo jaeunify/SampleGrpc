@@ -1,4 +1,5 @@
 using Orleans.Concurrency;
+using Orleans.Transactions;
 using Orleans.Transactions.Abstractions;
 
 [GenerateSerializer]
@@ -22,13 +23,29 @@ public class AccountGrain : Grain, IAccountGrain
         return _balance.PerformRead(balance => balance.Value);
     }
 
-    public Task Deposit(int amount)
+    public async Task Deposit(int amount)
     {
-        return _balance.PerformUpdate(b => b.Value += amount);
+        Console.WriteLine("Deposit: " + TransactionContext.GetRequiredTransactionInfo());
+        await _balance.PerformUpdate(b => b.Value += amount);
+        
+        if (amount == 100)
+        {
+            throw new Exception();
+        }
     }
 
-    public Task Withdraw(int amount)
+    public async Task Withdraw(int amount)
     {
-        return _balance.PerformUpdate(b => b.Value -= amount);
+        Console.WriteLine("Withdraw: " + TransactionContext.GetRequiredTransactionInfo());
+        await _balance.PerformUpdate(b => b.Value -= amount);
+    }
+    
+    public async Task Transfer(int amount, string targetId)
+    {
+        Console.WriteLine("Transfer: " + TransactionContext.GetRequiredTransactionInfo());
+        await Withdraw(amount); // 여기도 롤백됨
+        
+        var targetGrain = GrainFactory.GetGrain<IAccountGrain>(targetId); // 여기서 에러 발생 시
+        await targetGrain.Deposit(amount);
     }
 }

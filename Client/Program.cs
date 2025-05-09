@@ -100,6 +100,7 @@ class Program
             Console.WriteLine("= 1. Deposit");
             Console.WriteLine("= 2. Withdraw");
             Console.WriteLine("= 3. Transfer");
+            Console.WriteLine("= 4. GetBalance");
             Console.WriteLine("= 0. Exit");
             Console.WriteLine("========================");
 
@@ -146,6 +147,13 @@ class Program
                             Console.WriteLine($"[OK] now: {result.Amount}");
                         }
 
+                        break;
+                    
+                    case "4": // GetBalance
+                        Console.Write("for who? : ");
+                        var to2 = Console.ReadLine();
+                        var result2 = await client.GetBalanceAsync(new GetBalanceRequest { Id = to2 });
+                        Console.WriteLine($"[OK] now: {result2.Amount}");
                         break;
 
                     default:
