@@ -1,12 +1,12 @@
 ﻿public interface IAccountGrain : IGrainWithStringKey
 
 {
-    [Transaction(TransactionOption.CreateOrJoin)]
+    [Transaction(TransactionOption.Create)]
     Task<int> GetBalance();
     
-    [Transaction(TransactionOption.Join)]
+    [Transaction(TransactionOption.Create)]
     Task Deposit(int amount);
     
-    // [Transaction(TransactionOption.CreateOrJoin)]
-    // Task<bool> Withdraw(int amount);
+    [Transaction(TransactionOption.Create)]
+    Task Withdraw(int amount);
 }

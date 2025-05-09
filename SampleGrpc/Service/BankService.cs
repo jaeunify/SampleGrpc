@@ -31,6 +31,22 @@ namespace GrpcDemo.Services
             return new Account { Amount = balance };
         }
 
+        public override async Task<Account> Transfer(TransferRequest request, ServerCallContext context)
+        {
+            var userId = GetUserId(context);
+            var grain = _orleansClient.GetGrain<IAccountGrain>(userId);
+            var targetGrain = _orleansClient.GetGrain<IAccountGrain>(request.To);
+            
+            await _transactionClient.RunTransaction(TransactionOption.Create, async () =>
+            {
+                await grain.Withdraw(request.Amount);
+                await targetGrain.Deposit(request.Amount);
+            });
+            
+            var balance = await grain.GetBalance();
+            return new Account { Amount = balance };
+        }
+
         private string GetUserId(ServerCallContext context)
         {
             return "2"; // temp

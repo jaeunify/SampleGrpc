@@ -16,14 +16,19 @@ public class AccountGrain : Grain, IAccountGrain
     {
         _balance = balance ?? throw new ArgumentNullException(nameof(balance));
     }
-
-    public async Task Deposit(int amount)
+    
+    public Task<int> GetBalance()
     {
-        await _balance.PerformUpdate(b => b.Value += amount);
+        return _balance.PerformRead(balance => balance.Value);
     }
 
-    public async Task<int> GetBalance()
+    public Task Deposit(int amount)
     {
-        return await _balance.PerformRead(balance => balance.Value);
+        return _balance.PerformUpdate(b => b.Value += amount);
+    }
+
+    public Task Withdraw(int amount)
+    {
+        return _balance.PerformUpdate(b => b.Value -= amount);
     }
 }
